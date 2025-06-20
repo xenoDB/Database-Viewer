@@ -21,10 +21,11 @@
 
 ## ✨ Demo
 
-![Database Viewer Screenshot](./assets/demo-dark.png)
-![Database Viewer Screenshot Light](./assets/demo-light.png)
+<video src="./assets/demo.mp4" controls width="600">
+  Your browser does not support the video tag.
+</video>
 
-<sub>_Demo images: Dark and Light themes in action. See `/assets` for more._</sub>
+<sub>Video Demo Of The Website</sub>
 
 ---
 
