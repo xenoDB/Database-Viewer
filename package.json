@@ -1,0 +1,29 @@
+{
+  "name": "database-viewer",
+  "version": "1.0.0",
+  "description": "View Your Json Data",
+  "keywords": [
+    "html",
+    "database",
+    "database-viewer",
+    "json-viewer"
+  ],
+  "homepage": "https://github.com/grdAyush/Database-Viewer#readme",
+  "bugs": {
+    "url": "https://github.com/grdAyush/Database-Viewer/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/grdAyush/Database-Viewer.git"
+  },
+  "license": "ISC",
+  "author": "grdAyush",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}

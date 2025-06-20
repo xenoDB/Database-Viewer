@@ -1,0 +1,73 @@
+
+
+<!DOCTYPE html>
+<html data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Database Viewer</title>
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <header>
+      <div class="header-content">
+        <h1>📁 DATABASE VIEWER</h1>
+        <button class="theme-toggle" onclick="toggleTheme()">
+          <span class="theme-icon">🌓</span>
+        </button>
+      </div>
+    </header>
+    <div class="subheader">Storage / JSON previewer</div>
+
+    <main>
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <h3>File Explorer</h3>
+        </div>
+        <div id="tree" class="tree"></div>
+      </aside>
+
+      <section class="viewer">
+        <div class="viewer-header">
+          <h3 id="current-file">Select a file to preview</h3>
+<div class="controls">
+  <input id="searchKey" placeholder="Search in current file..." />
+  <button class="search-btn" onclick="searchInJson()">
+    <span class="search-icon">🔍</span>
+    Search
+  </button>
+  <label style="display: flex; align-items: center; gap: 0.3rem; font-size: 0.9rem;">
+    <input type="checkbox" id="include-values" checked />
+    Search in values
+  </label>
+</div>
+
+        </div>
+        <div id="preview" class="preview">
+          <div class="empty-state">
+            <div class="empty-icon">📄</div>
+            <p>Click a file to preview its contents</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Search Modal -->
+    <div id="search-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Search in Folder</h3>
+          <button class="close-btn" onclick="closeSearchModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <input id="folder-search" placeholder="Search files and folders..." />
+          <div id="search-results" class="search-results"></div>
+        </div>
+      </div>
+    </div>
+<script src="/static/script.js"></script>
+  </body>
+
+  
+
+</html>
