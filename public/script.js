@@ -1,7 +1,19 @@
+/**
+ * Database Viewer - Frontend Script
+ * Author: grdAyush (Ayush)
+ * GitHub: https://github.com/grdAyush
+ * 
+ * This script handles the rendering of the folder tree, JSON file previewing,
+ * folder-level and key-based searching, and theme management for the Database Viewer web application.
+ */
+
 let _currentJson = null
 let _currentTree = null
 let _currentFolderPath = []
 
+/**
+ * Fetches the folder tree from the server and renders it in the sidebar.
+ */
 async function fetchTree() {
   const res = await fetch('/api/tree')
   const tree = await res.json()
@@ -9,6 +21,12 @@ async function fetchTree() {
   renderTree(tree, document.getElementById('tree'))
 }
 
+/**
+ * Recursively renders files and folders in a collapsible tree view.
+ * @param {Array} nodes - Array of file/folder objects.
+ * @param {HTMLElement} container - The DOM element to render into.
+ * @param {Array} path - Current path as array of folder names.
+ */
 function renderTree(nodes, container, path = []) {
   const ul = document.createElement('ul')
   nodes.forEach((node) => {
@@ -30,11 +48,11 @@ function renderTree(nodes, container, path = []) {
       children.style.display = 'none'
       li.appendChild(children)
 
+      // Folder expand/collapse
       li.querySelector('.folder-name').addEventListener('click', () => {
         const isOpen = children.style.display !== 'none'
         children.style.display = isOpen ? 'none' : 'block'
         li.querySelector('.folder-icon').textContent = isOpen ? '📁' : '📂'
-
         if (!children.hasChildNodes() && !isOpen) {
           renderTree(node.children, children, currentPath)
         }
@@ -46,12 +64,11 @@ function renderTree(nodes, container, path = []) {
           <span class="file-name">${node.name}</span>
         </div>
       `
+      // File click: load and render JSON
       li.querySelector('.file-item').addEventListener('click', async () => {
-        // Add loading state
         const preview = document.getElementById('preview')
         preview.innerHTML = '<div class="loading">Loading...</div>'
         document.getElementById('current-file').textContent = node.name
-
         try {
           const res = await fetch(`/api/file/${encodeURIComponent(node.path)}`)
           _currentJson = await res.json()
@@ -66,7 +83,10 @@ function renderTree(nodes, container, path = []) {
   container.appendChild(ul)
 }
 
-// --- JSON TREE VIEWER START ---
+/**
+ * Renders a JSON object as a collapsible tree in the preview area.
+ * @param {object|Array} json - The JSON data to render.
+ */
 function renderJson(json) {
   const preview = document.getElementById('preview')
   preview.innerHTML = ''
@@ -80,11 +100,16 @@ function renderJson(json) {
   preview.appendChild(tree)
 }
 
+/**
+ * Recursively builds DOM elements to display JSON as a collapsible tree.
+ * @param {*} data - JSON node (object/array/primitive)
+ * @param {number} depth - Level of nesting (used for spacing)
+ * @returns {HTMLElement}
+ */
 function createJsonTree(data, depth = 0) {
   const container = document.createElement('div')
   container.className = 'json-tree'
 
-  // Helper for expandable/collapsible nodes
   function createNode(key, value) {
     const node = document.createElement('div')
     node.style.display = 'flex'
@@ -116,7 +141,7 @@ function createJsonTree(data, depth = 0) {
       node.appendChild(placeholder)
     }
 
-    // Key
+    // Key label
     if (key !== undefined && key !== null && key !== '') {
       const keySpan = document.createElement('span')
       keySpan.className = 'json-key'
@@ -125,7 +150,7 @@ function createJsonTree(data, depth = 0) {
       node.appendChild(document.createTextNode(': '))
     }
 
-    // Value
+    // Value display
     if (Array.isArray(value)) {
       const arr = document.createElement('span')
       arr.textContent = `[Array(${value.length})]`
@@ -170,7 +195,10 @@ function createJsonTree(data, depth = 0) {
       node.appendChild(valSpan)
     }
 
-    // Start collapsed for nested objects/arrays (except root)
+    // Add spacing for top-level keys
+    if (depth === 0) node.style.marginBottom = '0.45em';
+
+    // Start collapsed for nested objects/arrays except root
     if (hasChildren && depth !== 0) {
       child.style.display = 'none'
       node.querySelector('.json-toggle').textContent = '▶'
@@ -179,7 +207,6 @@ function createJsonTree(data, depth = 0) {
     return node
   }
 
-  // Root node(s)
   if (Array.isArray(data)) {
     data.forEach((item, idx) => {
       container.appendChild(createNode(idx, item))
@@ -191,8 +218,10 @@ function createJsonTree(data, depth = 0) {
   }
   return container
 }
-// --- JSON TREE VIEWER END ---
 
+/**
+ * Filters the currently loaded JSON by key (and optionally value) and renders the filtered result.
+ */
 function searchInJson() {
   const key = document.getElementById('searchKey').value.toLowerCase()
   const includeValues = document.getElementById('include-values').checked
@@ -215,6 +244,10 @@ function searchInJson() {
   renderJson(filtered)
 }
 
+/**
+ * Opens the folder-level search modal and sets the active folder path.
+ * @param {string} folderPath
+ */
 function openSearchModal(folderPath) {
   const modal = document.getElementById('search-modal')
   modal.style.display = 'flex'
@@ -222,6 +255,9 @@ function openSearchModal(folderPath) {
   _currentFolderPath = folderPath.split('/')
 }
 
+/**
+ * Closes the folder-level search modal and clears search state.
+ */
 function closeSearchModal() {
   const modal = document.getElementById('search-modal')
   modal.style.display = 'none'
@@ -229,29 +265,26 @@ function closeSearchModal() {
   document.getElementById('search-results').innerHTML = ''
 }
 
-// Search in folder functionality
-document.getElementById('folder-search').addEventListener('input', (e) => {
-  const query = e.target.value.toLowerCase()
-  if (!query) {
-    document.getElementById('search-results').innerHTML = ''
-    return
-  }
-
-  const results = searchInTree(_currentTree, query)
-  displaySearchResults(results)
-})
-
-// Recursively search for files/folders AND keys inside JSON files
-async function searchInTreeWithKeys(nodes, query, path = []) {
+/**
+ * Recursively searches for files, folders, and keys inside JSON files within a tree.
+ * Returns any matches by file/folder name or JSON key.
+ * @param {Array} nodes
+ * @param {string} query
+ * @returns {Promise<Array>}
+ */
+async function searchInTreeWithKeys(nodes, query) {
   let results = [];
   for (const node of nodes) {
+    // Match file/folder name
     if (node.name.toLowerCase().includes(query)) {
       results.push({ type: node.type, name: node.name, path: node.path, keys: [] });
     }
+    // Recurse into folders
     if (node.type === 'folder' && node.children) {
-      const childResults = await searchInTreeWithKeys(node.children, query, [...path, node.name]);
+      const childResults = await searchInTreeWithKeys(node.children, query);
       results = results.concat(childResults);
     }
+    // For files: search inside JSON keys
     if (node.type === 'file') {
       try {
         const res = await fetch(`/api/file/${encodeURIComponent(node.path)}`);
@@ -266,14 +299,20 @@ async function searchInTreeWithKeys(nodes, query, path = []) {
           });
         }
       } catch (err) {
-        // Ignore file read errors
+        // Skip files that can't be read as JSON
       }
     }
   }
   return results;
 }
 
-// Recursively find all keys matching query in JSON object
+/**
+ * Recursively finds all keys (dotted-path) matching a query in a JSON object.
+ * @param {object} obj
+ * @param {string} query
+ * @param {string} prefix
+ * @returns {Array<string>}
+ */
 function findMatchingKeys(obj, query, prefix = '') {
   let matches = [];
   if (typeof obj === 'object' && obj !== null) {
@@ -288,7 +327,40 @@ function findMatchingKeys(obj, query, prefix = '') {
   return matches;
 }
 
-// Display search results with previews for file-key matches
+/**
+ * Helper to get a value by its dotted path (e.g., 'foo.bar.baz') in an object.
+ * @param {object} obj
+ * @param {string} path
+ * @returns {*}
+ */
+function getByPath(obj, path) {
+  return path.split('.').reduce((acc, k) => (acc && (k in acc) ? acc[k] : undefined), obj);
+}
+
+/**
+ * Helper to set a value by its dotted path in an object, creating any missing objects along the path.
+ * @param {object} obj
+ * @param {string} path
+ * @param {*} value
+ */
+function setByPath(obj, path, value) {
+  const keys = path.split('.');
+  let current = obj;
+  keys.forEach((k, idx) => {
+    if (idx === keys.length - 1) {
+      current[k] = value;
+    } else {
+      if (!(k in current)) current[k] = {};
+      current = current[k];
+    }
+  });
+}
+
+/**
+ * Renders search results for folder/global search with logic for file/folder/key matches.
+ * Clicking a key-match result shows only the matched key(s).
+ * @param {Array} results
+ */
 function displaySearchResults(results) {
   const container = document.getElementById('search-results');
   if (results.length === 0) {
@@ -308,7 +380,9 @@ function displaySearchResults(results) {
           <span class="result-name">${result.name}</span>
           <span class="result-type">key match</span>
         </div>
-        <div style="padding-left:2.5em; font-size:0.98em; color:#60a5fa;">${result.keys.map(k => `<code>${k}</code>`).join(', ')}</div>
+        <div style="padding-left:2.5em; font-size:0.98em; color:#60a5fa; cursor:pointer;">
+          ${result.keys.map(k => `<code>${k}</code>`).join(', ')}
+        </div>
       `;
     } else {
       li.innerHTML = `
@@ -321,15 +395,29 @@ function displaySearchResults(results) {
     }
 
     if (result.type === 'file' || result.type === 'file-key') {
-      li.querySelector('.result-item').addEventListener('click', async () => {
+      li.style.cursor = "pointer";
+      li.addEventListener('click', async () => {
         closeSearchModal();
         document.getElementById('current-file').textContent = result.name;
         const preview = document.getElementById('preview');
         preview.innerHTML = '<div class="loading">Loading...</div>';
         try {
           const res = await fetch(`/api/file/${encodeURIComponent(result.path)}`);
-          _currentJson = await res.json();
-          renderJson(_currentJson);
+          const json = await res.json();
+
+          if (result.type === 'file-key' && result.keys && result.keys.length > 0) {
+            // Show only matched key(s)
+            const filtered = {};
+            result.keys.forEach(keyPath => {
+              const value = getByPath(json, keyPath);
+              setByPath(filtered, keyPath, value);
+            });
+            _currentJson = filtered;
+            renderJson(filtered);
+          } else {
+            _currentJson = json;
+            renderJson(_currentJson);
+          }
         } catch (err) {
           preview.innerHTML = '<div class="error">Error loading file</div>';
         }
@@ -342,62 +430,40 @@ function displaySearchResults(results) {
   container.appendChild(ul);
 }
 
-function displaySearchResults(results) {
-  const container = document.getElementById('search-results')
-  if (results.length === 0) {
-    container.innerHTML = '<div class="no-results">No results found</div>'
+/**
+ * Handles input in the folder search modal, performing a global search in the selected folder.
+ */
+document.getElementById('folder-search').addEventListener('input', async (e) => {
+  const query = e.target.value.toLowerCase()
+  if (!query) {
+    document.getElementById('search-results').innerHTML = ''
     return
   }
+  let nodes = _currentTree;
+  for (const folder of _currentFolderPath) {
+    const found = nodes.find(n => n.name === folder && n.type === 'folder');
+    if (!found) break;
+    nodes = found.children;
+  }
+  const results = await searchInTreeWithKeys(nodes, query);
+  displaySearchResults(results);
+});
 
-  const ul = document.createElement('ul')
-  ul.className = 'results-list'
-
-  results.forEach(result => {
-    const li = document.createElement('li')
-    li.innerHTML = `
-      <div class="result-item">
-        <span class="${result.type}-icon">${result.type === 'folder' ? '📁' : '📄'}</span>
-        <span class="result-name">${result.name}</span>
-        <span class="result-type">${result.type}</span>
-      </div>
-    `
-
-    if (result.type === 'file') {
-      li.querySelector('.result-item').addEventListener('click', async () => {
-        closeSearchModal()
-        document.getElementById('current-file').textContent = result.name
-        const preview = document.getElementById('preview')
-        preview.innerHTML = '<div class="loading">Loading...</div>'
-        try {
-          const res = await fetch(`/api/file/${encodeURIComponent(result.path)}`)
-          _currentJson = await res.json()
-          renderJson(_currentJson)
-        } catch (err) {
-          preview.innerHTML = '<div class="error">Error loading file</div>'
-        }
-      })
-    }
-
-    ul.appendChild(li)
-  })
-
-  container.innerHTML = ''
-  container.appendChild(ul)
-}
-
+/**
+ * Toggles dark/light theme and remembers preference.
+ */
 function toggleTheme() {
   const theme = document.documentElement.getAttribute('data-theme')
   const newTheme = theme === 'dark' ? 'light' : 'dark'
   document.documentElement.setAttribute('data-theme', newTheme)
   localStorage.setItem('theme', newTheme)
-
   document.body.style.transition = 'all 0.3s ease'
   setTimeout(() => {
     document.body.style.transition = ''
   }, 300)
 }
 
-// Close modal when clicking outside
+// Hide search modal when background is clicked
 window.addEventListener('click', (e) => {
   const modal = document.getElementById('search-modal')
   if (e.target === modal) {
@@ -405,9 +471,11 @@ window.addEventListener('click', (e) => {
   }
 })
 
+// Restore saved theme on load
 const savedTheme = localStorage.getItem('theme')
 if (savedTheme) {
   document.documentElement.setAttribute('data-theme', savedTheme)
 }
 
+// Initial load
 fetchTree()
