@@ -1,48 +1,71 @@
-
-
 <!DOCTYPE html>
 <html data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <title>Database Viewer</title>
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    
+    <!-- Link to the main stylesheet -->
     <link rel="stylesheet" href="/static/style.css" />
   </head>
   <body>
+
+    <!-- =========================
+         Header Bar
+         Contains title and theme toggle
+    ========================== -->
     <header>
       <div class="header-content">
         <h1>📁 DATABASE VIEWER</h1>
+        
+        <!-- Theme toggle button -->
         <button class="theme-toggle" onclick="toggleTheme()">
           <span class="theme-icon">🌓</span>
         </button>
       </div>
     </header>
+
+    <!-- Subheader: brief context -->
     <div class="subheader">Storage / JSON previewer</div>
 
+    <!-- =========================
+         Main layout: sidebar + viewer
+    ========================== -->
     <main>
+      
+      <!-- ===== Sidebar: File explorer ===== -->
       <aside class="sidebar">
         <div class="sidebar-header">
           <h3>File Explorer</h3>
         </div>
+        
+        <!-- Container for the file/folder tree -->
         <div id="tree" class="tree"></div>
       </aside>
 
+      <!-- ===== Right section: JSON Viewer ===== -->
       <section class="viewer">
         <div class="viewer-header">
+          <!-- Filename heading -->
           <h3 id="current-file">Select a file to preview</h3>
-<div class="controls">
-  <input id="searchKey" placeholder="Search in current file..." />
-  <button class="search-btn" onclick="searchInJson()">
-    <span class="search-icon">🔍</span>
-    Search
-  </button>
-  <label style="display: flex; align-items: center; gap: 0.3rem; font-size: 0.9rem;">
-    <input type="checkbox" id="include-values" checked />
-    Search in values
-  </label>
-</div>
 
+          <!-- Controls for search within current JSON file -->
+          <div class="controls">
+            <input id="searchKey" placeholder="Search in current file..." />
+            <button class="search-btn" onclick="searchInJson()">
+              <span class="search-icon">🔍</span>
+              Search
+            </button>
+
+            <!-- Toggle for searching inside values -->
+            <label style="display: flex; align-items: center; gap: 0.3rem; font-size: 0.9rem;">
+              <input type="checkbox" id="include-values" checked />
+              Search in values
+            </label>
+          </div>
         </div>
+
+        <!-- JSON content preview area -->
         <div id="preview" class="preview">
           <div class="empty-state">
             <div class="empty-icon">📄</div>
@@ -52,22 +75,28 @@
       </section>
     </main>
 
-    <!-- Search Modal -->
+    <!-- =========================
+         Modal: Folder-wide Search
+    ========================== -->
     <div id="search-modal" class="modal">
       <div class="modal-content">
+
+        <!-- Modal header -->
         <div class="modal-header">
           <h3>Search in Folder</h3>
+          <!-- Close button for modal -->
           <button class="close-btn" onclick="closeSearchModal()">&times;</button>
         </div>
+
+        <!-- Modal content -->
         <div class="modal-body">
           <input id="folder-search" placeholder="Search files and folders..." />
           <div id="search-results" class="search-results"></div>
         </div>
       </div>
     </div>
-<script src="/static/script.js"></script>
+
+    <!-- Load main JavaScript -->
+    <script src="/static/script.js"></script>
   </body>
-
-  
-
 </html>

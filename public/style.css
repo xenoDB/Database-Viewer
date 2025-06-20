@@ -1,3 +1,15 @@
+/**
+ * Database Viewer - Main Stylesheet (Part 1)
+ * Author: Ayush (grdAyush)
+ * GitHub: https://github.com/grdAyush
+ * 
+ * This file contains professional, maintainable, and modular CSS for the Database Viewer app.
+ * For full attribution and details, see the end of the file.
+ */
+
+/* ==========================================================================
+   1. Root Theme Variables
+   ========================================================================== */
 :root {
   --bg-primary: #ffffff;
   --bg-secondary: #f8fafc;
@@ -20,6 +32,7 @@
   --radius-lg: 12px;
 }
 
+/* Dark Mode Variables */
 [data-theme='dark'] {
   --bg-primary: #0f172a;
   --bg-secondary: #1e293b;
@@ -34,18 +47,21 @@
   --accent-gradient: linear-gradient(135deg, #60a5fa, #a78bfa);
 }
 
-
+/* Sidebar dark override */
 [data-theme='dark'] .sidebar {
   background: #192338;
   border-right: 1.5px solid #232e47;
   box-shadow: 2px 0 12px 0 rgba(20, 25, 35, 0.15);
 }
+
+/* ==========================================================================
+   2. Global Reset & Base
+   ========================================================================== */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
-
 
 body {
   background: var(--bg-primary);
@@ -58,8 +74,9 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-
-
+/* ==========================================================================
+   3. Header & Theme Toggle
+   ========================================================================== */
 header {
   background: var(--accent-gradient);
   color: white;
@@ -77,12 +94,14 @@ header {
   align-items: center;
 }
 
+/* App title in header */
 .header-content h1 {
   font-size: 1.5rem;
   font-weight: 700;
   margin: 0;
 }
 
+/* Theme toggle button styling */
 .theme-toggle {
   background: rgba(255, 255, 255, 0.2);
   border: none;
@@ -95,12 +114,12 @@ header {
   align-items: center;
   gap: 0.5rem;
 }
-
 .theme-toggle:hover {
   background: rgba(255, 255, 255, 0.3);
   transform: scale(1.05);
 }
 
+/* Subheader styling */
 .subheader {
   background: var(--bg-secondary);
   padding: 0.75rem 2rem;
@@ -110,17 +129,21 @@ header {
   margin: 0;
 }
 
+/* ==========================================================================
+   4. Main Layout (Sidebar & Viewer)
+   ========================================================================== */
 main {
   flex: 1;
   display: flex;
   height: calc(100vh - 120px);
-  width: 100vw;           /* FULL WIDTH */
+  width: 100vw;
   max-width: none;
   margin: 0;
   background: var(--bg-primary);
   box-shadow: none;
 }
 
+/* Sidebar styles */
 .sidebar {
   width: 280px;
   min-width: 220px;
@@ -132,34 +155,30 @@ main {
   display: flex;
   flex-direction: column;
 }
-
 .sidebar-header {
   padding: 1.25rem 1rem 1rem 1rem;
   border-bottom: 1px solid var(--border-light);
   background: var(--bg-tertiary);
 }
-
 .sidebar-header h3 {
   font-size: 1rem;
   font-weight: 600;
   color: var(--text-primary);
 }
-
 .tree {
   padding: 1rem;
   flex: 1;
 }
-
 .tree ul {
   list-style: none;
   padding-left: 0;
 }
-
 .tree ul ul {
   padding-left: 1.5rem;
   margin-top: 0.5rem;
 }
 
+/* Folder/File Items in tree */
 .folder-item, .file-item {
   display: flex;
   align-items: center;
@@ -185,6 +204,7 @@ main {
   font-weight: 500;
 }
 
+/* Folder search button (shows on hover) */
 .folder-search-btn {
   background: var(--accent-primary);
   border: none;
@@ -196,20 +216,23 @@ main {
   transition: all 0.2s ease;
   font-size: 0.75rem;
 }
-
 .folder-item:hover .folder-search-btn {
   opacity: 1;
 }
-
 .folder-search-btn:hover {
   background: var(--accent-secondary);
   transform: scale(1.1);
 }
 
+/* Collapsible children nodes */
 .folder-children {
   overflow: hidden;
   transition: all 0.3s ease;
 }
+
+/* ==========================================================================
+   5. JSON Viewer & Table Styles
+   ========================================================================== */
 .viewer {
   flex: 1;
   display: flex;
@@ -228,7 +251,6 @@ main {
   box-shadow: none;
 }
 
-
 .viewer-header h3 {
   font-size: 1.1rem;
   font-weight: 600;
@@ -236,12 +258,12 @@ main {
   color: var(--text-primary);
 }
 
+/* Controls (search, etc.) */
 .controls {
   display: flex;
   gap: 0.75rem;
   align-items: center;
 }
-
 .controls input {
   flex: 1;
   max-width: 300px;
@@ -253,13 +275,11 @@ main {
   font-size: 0.9rem;
   transition: all 0.2s ease;
 }
-
 .controls input:focus {
   outline: none;
   border-color: var(--accent-primary);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
-
 .search-btn {
   background: var(--accent-primary);
   border: none;
@@ -273,7 +293,6 @@ main {
   align-items: center;
   gap: 0.5rem;
 }
-
 .search-btn:hover {
   background: var(--accent-secondary);
   transform: translateY(-1px);
@@ -289,6 +308,7 @@ main {
   margin: 0;
 }
 
+/* Empty state and loading/error/warning styles */
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -298,13 +318,11 @@ main {
   color: var(--text-muted);
   text-align: center;
 }
-
 .empty-icon {
   font-size: 3rem;
   margin-bottom: 1rem;
   opacity: 0.5;
 }
-
 .loading {
   display: flex;
   align-items: center;
@@ -313,7 +331,6 @@ main {
   font-size: 1.1rem;
   color: var(--text-secondary);
 }
-
 .error {
   display: flex;
   align-items: center;
@@ -323,6 +340,7 @@ main {
   font-weight: 500;
 }
 
+/* Data Table Styling */
 .data-table {
   width: 100%;
   border-collapse: collapse;
@@ -332,7 +350,6 @@ main {
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--border-light);
 }
-
 .data-table th {
   background: var(--bg-tertiary);
   padding: 1rem;
@@ -341,40 +358,35 @@ main {
   color: var(--text-primary);
   border-bottom: 2px solid var(--border-medium);
 }
-
 .data-table td {
   padding: 0.75rem 1rem;
   border-bottom: 1px solid var(--border-light);
   color: var(--text-primary);
   word-break: break-word;
 }
-
 .data-table .key-cell {
   font-weight: 600;
   color: var(--accent-primary);
   background: var(--bg-secondary);
 }
-
 .row-even {
   background: var(--bg-primary);
 }
-
 .row-odd {
   background: var(--bg-secondary);
 }
-
 .data-table tr:hover {
   background: var(--bg-tertiary) !important;
 }
+/* ==========================================================================
+   6. Modal Styles
+   ========================================================================== */
 
-/* Modal Styles */
+/* Modal background overlay */
 .modal {
   display: none;
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0; width: 100%; height: 100%;
   background: rgba(0, 0, 0, 0.5);
   justify-content: center;
   align-items: center;
@@ -382,6 +394,7 @@ main {
   backdrop-filter: blur(4px);
 }
 
+/* Modal content panel */
 .modal-content {
   background: var(--bg-primary);
   border-radius: var(--radius-lg);
@@ -401,13 +414,11 @@ main {
   background: var(--bg-secondary);
   border-bottom: 1px solid var(--border-light);
 }
-
 .modal-header h3 {
   margin: 0;
   font-size: 1.2rem;
   font-weight: 600;
 }
-
 .close-btn {
   background: none;
   border: none;
@@ -416,15 +427,12 @@ main {
   color: var(--text-secondary);
   transition: color 0.2s ease;
 }
-
 .close-btn:hover {
   color: var(--error);
 }
-
 .modal-body {
   padding: 1.5rem;
 }
-
 .modal-body input {
   width: 100%;
   padding: 0.75rem;
@@ -435,16 +443,13 @@ main {
   font-size: 1rem;
   margin-bottom: 1rem;
 }
-
 .search-results {
   max-height: 300px;
   overflow-y: auto;
 }
-
 .results-list {
   list-style: none;
 }
-
 .result-item {
   display: flex;
   align-items: center;
@@ -454,16 +459,13 @@ main {
   transition: all 0.2s ease;
   cursor: pointer;
 }
-
 .result-item:hover {
   background: var(--bg-secondary);
 }
-
 .result-name {
   flex: 1;
   font-weight: 500;
 }
-
 .result-type {
   font-size: 0.8rem;
   color: var(--text-secondary);
@@ -473,14 +475,15 @@ main {
   text-transform: uppercase;
   font-weight: 600;
 }
-
 .no-results {
   text-align: center;
   padding: 2rem;
   color: var(--text-muted);
 }
 
-/* JSON Tree Viewer styles */
+/* ==========================================================================
+   7. JSON Tree Viewer
+   ========================================================================== */
 .json-tree {
   font-family: "Fira Mono", "Consolas", monospace;
   font-size: 1.15rem;
@@ -489,11 +492,9 @@ main {
   padding: 1.2rem 0 0.8rem 0;
   line-height: 1.9;
 }
-
 .json-tree > div {
   margin-bottom: 0.45em;
 }
-
 .json-key {
   color: #60a5fa;
   font-weight: 700;
@@ -502,28 +503,23 @@ main {
   margin-right: 0.2em;
   transition: color 0.15s;
 }
-
 .json-value-string {
   color: #4ade80;
   font-weight: 500;
 }
-
 .json-value-number {
   color: #fbbf24;
   font-weight: 600;
 }
-
 .json-value-boolean {
   color: #f472b6;
   font-weight: 600;
 }
-
 .json-value-null {
   color: #64748b;
   font-style: italic;
   opacity: 0.8;
 }
-
 .json-toggle {
   cursor: pointer;
   color: #a5b4fc;
@@ -537,36 +533,30 @@ main {
 .json-toggle:hover {
   color: #fbbf24;
 }
-
 .json-indent {
   margin-left: 1.5em;
   border-left: 2px solid rgba(59,130,246,0.08);
   padding-left: 1.1em;
   transition: border-color 0.2s;
 }
-
 .json-tree div {
   border-radius: 7px;
   padding: 0.17em 0.95em 0.17em 0.22em;
   transition: background 0.18s, box-shadow 0.18s;
 }
-
 .json-tree div:hover {
   background: rgba(59, 130, 246, 0.10);
   box-shadow: 0 0 0 2px rgba(59,130,246,0.05);
   z-index: 1;
   position: relative;
 }
-
 .json-tree > div {
   margin-left: 0;
 }
-
 /* Collapsed node marker style */
 .json-toggle[aria-expanded="false"] {
   color: #f472b6;
 }
-
 /* Array/Object title styles */
 .json-array-title,
 .json-object-title {
@@ -579,78 +569,16 @@ main {
   font-weight: 600;
   letter-spacing: 0.01em;
 }
-/* Responsive Design */
-@media (max-width: 768px) {
-  main {
-    flex-direction: column;
-  }
-  
-  .sidebar {
-    width: 100%;
-    height: 300px;
-  }
-  
-  .header-content {
-    padding: 0 1rem;
-  }
-  
-  .controls {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  
-  .controls input {
-    max-width: none;
-  }
-}
 
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes slideIn {
-  from { transform: translateX(-100%); }
-  to { transform: translateX(0); }
-}
-
-.tree li {
-  animation: fadeIn 0.3s ease;
-}
-
-.modal-content {
-  animation: fadeIn 0.3s ease;
-}
-
-/* Scrollbar Styling */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--border-medium);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--text-muted);
-}
-
-/* ...existing CSS... */
-
-/* Responsive Design */
+/* ==========================================================================
+   8. Responsive Design & Animations
+   ========================================================================== */
 @media (max-width: 768px) {
   main {
     flex-direction: column;
     /* REMOVE fixed height for better mobile compatibility */
     height: auto;
   }
-  
   .sidebar {
     width: 100% !important;
     min-width: 0;
@@ -683,7 +611,6 @@ main {
   }
 }
 
-/* Ensure tables and modal fit small screens */
 .data-table, .modal-content {
   width: 100%;
   max-width: 99vw;
@@ -702,3 +629,56 @@ main {
   }
 }
 
+/* Key UI animations for subtle feedback */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideIn {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+.tree li {
+  animation: fadeIn 0.3s ease;
+}
+.modal-content {
+  animation: fadeIn 0.3s ease;
+}
+
+/* ==========================================================================
+   9. Custom Scrollbar Styling
+   ========================================================================== */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-medium);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* ==========================================================================
+   10. Footer Credit
+   ========================================================================== */
+#footer-credit {
+  padding: 1.3em 0;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 1.02em;
+  letter-spacing: 0.01em;
+}
+#footer-credit a {
+  color: var(--accent-primary);
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   © 2025 Ayush (grdAyush) - https://github.com/grdAyush/Database-Viewer
+   Professional full file commentary and modular structure.
+   ==========================================================================
+ */
